@@ -241,11 +241,16 @@ export async function handler(argv: RunCommandArguments) {
 }
 
 async function tsConfigPathFromConfigFile(wdioConfPath: string, params: Partial<RunCommandArguments>): Promise<string | void> {
-    const configParser = new ConfigParser(wdioConfPath, params)
-    await configParser.initialize()
-    const { tsConfigPath } = configParser.getConfig()
-    if (tsConfigPath ) {
-        return tsConfigPath
+    try {
+        const configParser = new ConfigParser(wdioConfPath, params)
+        await configParser.initialize()
+        const { tsConfigPath } = configParser.getConfig()
+        if (tsConfigPath) {
+            return tsConfigPath
+        }
+    } catch {
+        console.warn(`Unable to parse config file. If tsConfigPath is set in ${wdioConfPath}, it will be ignored.`)
+        return
     }
     return
 }
